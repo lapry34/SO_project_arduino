@@ -13,12 +13,11 @@
 static uint8_t buf[MAX_BUF]; // Buffer for UART
 static uint8_t overflow_count = 0; // Variable to count overflows of timer
 
-// Time variables
-static uint8_t minutes = 0;
-static uint8_t hours = 0;
-static uint8_t days = 0;
-static uint8_t months = 0;
-static uint8_t years = 0;
+// Time struct
+Time time = {0}; //initialize all to 0
+
+//Data struct
+Data data = {0}; //initialize all to 0
 
 void setup_timer(void) {
 
@@ -55,13 +54,13 @@ ISR(TIMER1_COMPA_vect) {
 
       //read from ADC and print the value
       uint16_t adc_value = ADC_read(ADC_PIN);
-      uint8_t flag_process = process_time(&minutes, &hours, &days, &months, &years);
-      
-      sprintf((char*) buf, "minute: %d, ADC value: %d\n", minutes, adc_value);
-      sprintf((char*) buf, "minute: %d, hour: %d, day: %d, month: %d, year: %d\n", minutes, hours, days, months, years);
+      uint8_t flag_process = process_time(&data, &time, adc_value);
+
+      sprintf((char*) buf, "adc_value %d, minute: %d, hour: %d, day: %d, month: %d, year: %d\n", adc_value, 
+        time.minutes, time.hours, time.days, time.months, time.years);
       UART_putString(buf);
 
-      if(flag_process == 0) minutes++; // Increment minute count
+      if(flag_process == 0) time.minutes++; // Increment minute count
     }
 
 }
