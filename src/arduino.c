@@ -6,7 +6,62 @@
 #include "adc.h"
 
 #define MAX_BUF 256
+#define ADC_PIN 7
+#define OVERFLOW_VALUE 1 // 14 //così so 58 secondi e qualcosa
 
+static uint8_t buf[MAX_BUF];
+volatile uint8_t overflow_count = 0;
+volatile uint8_t minutes = 0;
+volatile uint8_t hours = 0;
+volatile uint8_t days = 0;
+volatile uint8_t months = 0;
+volatile uint16_t years = 0;
+
+void setup_timer(void) {
+
+    // Set Timer to CTC (Clear Timer on Compare Match) mode
+    TCCR1A = 0; 
+    TCCR1B |= (1 << WGM12);
+
+    // Set the Compare Match Register for 1 minute
+    // Assuming a 16 MHz clock and a prescaler of 1024
+
+
+    OCR1A = 65535; // Count to 65535, the maximum value of a 16-bit register!
+    //we have to overflow and count to get a minute!
+
+    OCR1A = 300; //per debug!!! togliere!!!
+    
+    // Enable Timer1 compare interrupt
+    TIMSK1 |= (1 << OCIE1A);
+
+    // Start Timer1 with prescaler 1024
+    TCCR1B |= (1 << CS12) | (1 << CS10);
+
+}
+
+
+ISR(TIMER1_COMPA_vect) {
+    overflow_count++;
+    if (overflow_count >= OVERFLOW_VALUE) {  // Check for overflows
+      overflow_count = 0;                    // Reset overflow count
+
+      // Do something every minute
+      // For example, toggle the LED on pin 13
+      PORTB ^= (1 << PORTB5);
+
+      //read from ADC and print the value
+      uint16_t adc_value = ADC_read(ADC_PIN);
+      uint8_t flag_process = process_time(&minutes, &hours, &days, &months, &years);
+      
+      sprintf((char*) buf, "minute: %d, ADC value: %d\n", minutes, adc_value);
+      sprintf((char*) buf, "minute: %d, hour: %d, day: %d, month: %d, year: %d\n", minutes, hours, days, months, years);
+      UART_putString(buf);
+
+      if(flag_process == 0) minutes++; // Increment minute count
+    }
+
+}
 
 
 int main(void){
@@ -17,19 +72,19 @@ int main(void){
   UART_init();
   ADC_init();
 
+  // Set pin 13 as output
+  DDRB |= (1 << DDB5);
+
+  // initialize timer
+  setup_timer();
 
   //end init
   enable_interrupts();
 
+  UART_putString((uint8_t*)"Buongiornissimo sono quello simpaticissimo\n");
 
-  UART_putString((uint8_t*)"write something, i'll repeat it\n");
   uint8_t buf[MAX_BUF];
   while(1) {
 
-    // Read from ADC channel 7
-    uint16_t adc_value = ADC_read(7);
-    // Print the value into a string buffer
-    sprintf(buf, "ADC value: %d\n", adc_value);
-    UART_putString(buf);
   }
 }
