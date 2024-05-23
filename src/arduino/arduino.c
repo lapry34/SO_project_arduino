@@ -19,6 +19,7 @@ Time time = {0}; //initialize all to 0
 //Data struct
 Data data = {0}; //initialize all to 0
 
+// Timer setup
 void setup_timer(void) {
 
     // Set Timer to CTC (Clear Timer on Compare Match) mode
@@ -42,7 +43,7 @@ void setup_timer(void) {
     return;
 }
 
-
+// Timer interrupt
 ISR(TIMER1_COMPA_vect) {
     overflow_count++;
     if (overflow_count >= OVERFLOW_VALUE) {  // Check for overflows
@@ -56,13 +57,20 @@ ISR(TIMER1_COMPA_vect) {
       uint16_t adc_value = ADC_read(ADC_PIN);
       uint8_t flag_process = process_time(&data, &time, adc_value);
 
-      sprintf((char*) buf, "adc_value %d, minute: %d, hour: %d, day: %d, month: %d, year: %d\n", adc_value, 
-        time.minutes, time.hours, time.days, time.months, time.years);
-      UART_putString(buf);
-
       if(flag_process == 0) time.minutes++; // Increment minute count
     }
 
+}
+
+// UART receive interrupt
+ISR(USART_RX_vect) {
+    unsigned char received_byte = UDR0;
+
+    // Respond data request
+    if (received_byte == 'R') {
+        // Send data struct
+        UART_putData(&data);
+    }
 }
 
 
@@ -82,8 +90,6 @@ int main(void){
 
   //end init
   enable_interrupts();
-
-  UART_putString((uint8_t*)"Buongiornissimo sono quello simpaticissimo\n");
 
   while(1) {
     // we go to sleep

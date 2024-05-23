@@ -1,4 +1,4 @@
-#include "./utils.h"
+#include "utils.h"
 
 //enable interrupts
 void enable_interrupts(void){
