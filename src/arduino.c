@@ -1,4 +1,5 @@
 #include <util/delay.h>
+#include <avr/sleep.h>
 #include <stdio.h>
 
 #include "utils.h"
@@ -6,16 +7,18 @@
 #include "adc.h"
 
 #define MAX_BUF 256
-#define ADC_PIN 7
-#define OVERFLOW_VALUE 1 // 14 //così so 58 secondi e qualcosa
+#define ADC_PIN 7 //a random analog pin
+#define OVERFLOW_VALUE 1 //DEBUG!!! 14 //così so 58 secondi e qualcosa
 
-static uint8_t buf[MAX_BUF];
-volatile uint8_t overflow_count = 0;
-volatile uint8_t minutes = 0;
-volatile uint8_t hours = 0;
-volatile uint8_t days = 0;
-volatile uint8_t months = 0;
-volatile uint16_t years = 0;
+static uint8_t buf[MAX_BUF]; // Buffer for UART
+static uint8_t overflow_count = 0; // Variable to count overflows of timer
+
+// Time variables
+static uint8_t minutes = 0;
+static uint8_t hours = 0;
+static uint8_t days = 0;
+static uint8_t months = 0;
+static uint8_t years = 0;
 
 void setup_timer(void) {
 
@@ -26,18 +29,18 @@ void setup_timer(void) {
     // Set the Compare Match Register for 1 minute
     // Assuming a 16 MHz clock and a prescaler of 1024
 
-
     OCR1A = 65535; // Count to 65535, the maximum value of a 16-bit register!
     //we have to overflow and count to get a minute!
 
-    OCR1A = 300; //per debug!!! togliere!!!
-    
+    OCR1A = 300; //DEBUG!!! TOGLIERE!!!!
+
     // Enable Timer1 compare interrupt
     TIMSK1 |= (1 << OCIE1A);
 
     // Start Timer1 with prescaler 1024
     TCCR1B |= (1 << CS12) | (1 << CS10);
 
+    return;
 }
 
 
@@ -83,8 +86,9 @@ int main(void){
 
   UART_putString((uint8_t*)"Buongiornissimo sono quello simpaticissimo\n");
 
-  uint8_t buf[MAX_BUF];
   while(1) {
-
+    // we go to sleep
+    sleep_cpu();
   }
+
 }
