@@ -3,10 +3,7 @@
 int serial_set_interface_attribs(int fd, int speed, int parity) {
   struct termios tty;
   memset (&tty, 0, sizeof tty);
-  if (tcgetattr (fd, &tty) != 0) {
-    printf ("error %d from tcgetattr", errno);
-    return -1;
-  }
+  if (tcgetattr (fd, &tty) != 0) handle_error("tcgetattr");
   switch (speed){
   case 19200:
     speed=B19200;
@@ -27,8 +24,8 @@ int serial_set_interface_attribs(int fd, int speed, int parity) {
     speed=B921600;
     break;
   default:
-    printf("cannot sed baudrate %d\n", speed);
-    return -1;
+    fprintf(stderr, "cannot set baudrate %d\n", speed);
+    exit(EXIT_FAILURE);
   }
   cfsetospeed (&tty, speed);
   cfsetispeed (&tty, speed);
@@ -38,33 +35,24 @@ int serial_set_interface_attribs(int fd, int speed, int parity) {
   tty.c_cflag |= parity;
   tty.c_cflag = (tty.c_cflag & ~CSIZE) | CS8;      // 8-bit chars
 
-  if (tcsetattr (fd, TCSANOW, &tty) != 0) {
-    printf ("error %d from tcsetattr", errno);
-    return -1;
-  }
+  if (tcsetattr (fd, TCSANOW, &tty) != 0) handle_error("tcsetattr");
   return 0;
 }
 
 void serial_set_blocking(int fd, int should_block) {
   struct termios tty;
   memset (&tty, 0, sizeof tty);
-  if (tcgetattr (fd, &tty) != 0) {
-      printf ("error %d from tggetattr", errno);
-      return;
-  }
+  if (tcgetattr (fd, &tty) != 0) handle_error("tcgetattr");
 
   tty.c_cc[VMIN]  = should_block ? 1 : 0;
   tty.c_cc[VTIME] = 5;            // 0.5 seconds read timeout
 
-  if (tcsetattr (fd, TCSANOW, &tty) != 0)
-    printf ("error %d setting term attributes", errno);
+  if (tcsetattr (fd, TCSANOW, &tty) != 0) handle_error("tcsetattr");
 }
 
 int serial_open(const char* name) {
   int fd = open (name, O_RDWR | O_NOCTTY | O_SYNC );
-  if (fd < 0) {
-    printf ("error %d opening serial, fd %d\n", errno, fd);
-  }
+  if (fd < 0) handle_error("open");
   return fd;
 }
 

@@ -38,27 +38,18 @@ int main(int argc, const char** argv) {
     if (read_or_write) {
       int nchars = read(fd, buf,BUF_SIZE);
 
-      if (nchars < 0) {
-        printf("error %d from read", errno);
-        exit(EXIT_FAILURE);
-      }
+      if (nchars < 0) handle_error("read");
 
       printf("%s", buf);
     } else {
       char* ret_ptr = fgets(buf, BUF_SIZE, stdin);
-      if (ret_ptr == NULL) {
-        printf("error %d from fgets", errno);
-        exit(EXIT_FAILURE);
-      }
+      if (ret_ptr == NULL) handle_error("fgets");
 
       int l = strlen(buf);
       buf[l++]='\n';
-      
+
       ret = write(fd, buf, l);
-      if (ret < 0) {
-        printf("error %d from write", errno);
-        exit(EXIT_FAILURE);
-      }
+      if (ret < 0) handle_error("write");
     }
   }
 
