@@ -4,21 +4,15 @@
 #include <termios.h>
 #include <unistd.h>
 #include <string.h>
-#include <stdio.h>
-#include <stdlib.h>
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <fcntl.h>
 
-
+#include "utils.h"
 
 #ifdef __cplusplus
 extern "C" {
 #endif
-
-  #define handle_error(msg) \
-    do { perror(msg); exit(EXIT_FAILURE); } while (0)
-
 
   //! returns the descriptor of a serial port
   int serial_open(const char* name);

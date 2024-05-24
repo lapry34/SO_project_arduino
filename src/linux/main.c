@@ -1,31 +1,19 @@
 
-#include <errno.h>
-#include <termios.h>
-#include <unistd.h>
-#include <string.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <sys/types.h>
-#include <sys/stat.h>
-#include <fcntl.h>
-
 #include "serial_linux.h"
+#include "utils.h"
 
 /*
-  serial_linux <serial_file> <baudrate> <read=1, write=0>
+  serial_linux <serial_file> <baudrate> 
 */
-
-#define BUF_SIZE 1024
 
 int main(int argc, const char** argv) {
   int ret;
 
-  if (argc < 4) {
-    printf("serial_linux <serial_file> <baudrate> <read=1, write=0>\n");
+  if (argc < 3) {
+    printf("serial_linux <serial_file> <baudrate> \n");
   }
   const char* serial_device = argv[1];
   int baudrate = atoi(argv[2]);
-  int read_or_write = atoi(argv[3]);
 
   int fd = serial_open(serial_device);
   serial_set_interface_attribs(fd, baudrate, 0);
@@ -33,24 +21,24 @@ int main(int argc, const char** argv) {
 
   printf("in place\n");
   while(1) {
-    char buf[BUF_SIZE] = {0};
+    
+    //read from stdin any character
+    getchar();
 
-    if (read_or_write) {
-      int nchars = read(fd, buf,BUF_SIZE);
+    Data data = {0};
 
-      if (nchars < 0) handle_error("read");
+    const char recv = 'R';
 
-      printf("%s", buf);
-    } else {
-      char* ret_ptr = fgets(buf, BUF_SIZE, stdin);
-      if (ret_ptr == NULL) handle_error("fgets");
+    ret = write(fd, &recv, sizeof(const char));
+    if (ret < 0) handle_error("write");
 
-      int l = strlen(buf);
-      buf[l++]='\n';
+    int nchars = read(fd, &data, sizeof(Data));
 
-      ret = write(fd, buf, l);
-      if (ret < 0) handle_error("write");
-    }
+    if (nchars < 0) handle_error("read");
+
+    print_Data(&data);
+
+
   }
 
   exit(EXIT_SUCCESS);

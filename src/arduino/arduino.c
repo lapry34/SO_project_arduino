@@ -6,11 +6,9 @@
 #include "uart.h"
 #include "adc.h"
 
-#define MAX_BUF 256
 #define ADC_PIN 7 //a random analog pin
 #define OVERFLOW_VALUE 1 //DEBUG!!! 14 //così so 58 secondi e qualcosa
 
-static uint8_t buf[MAX_BUF]; // Buffer for UART
 static uint8_t overflow_count = 0; // Variable to count overflows of timer
 
 // Time struct
@@ -49,10 +47,6 @@ ISR(TIMER1_COMPA_vect) {
     if (overflow_count >= OVERFLOW_VALUE) {  // Check for overflows
       overflow_count = 0;                    // Reset overflow count
 
-      // Do something every minute
-      // For example, toggle the LED on pin 13
-      PORTB ^= (1 << PORTB5);
-
       //read from ADC and print the value
       uint16_t adc_value = ADC_read(ADC_PIN);
       uint8_t flag_process = process_time(&data, &time, adc_value);
@@ -65,6 +59,8 @@ ISR(TIMER1_COMPA_vect) {
 // UART receive interrupt
 ISR(USART_RX_vect) {
     unsigned char received_byte = UDR0;
+
+    PORTB ^= (1 << PORTB5); // Toggle pin 13 on received byte
 
     // Respond data request
     if (received_byte == 'R') {
