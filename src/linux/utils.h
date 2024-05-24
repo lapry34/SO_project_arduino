@@ -30,3 +30,6 @@ void serial_readData(int fd, Data* data);
 
 //print data to stdout
 void print_Data(Data* data);
+
+//dump data to file
+void dump_Data(Data* data, const char* filename);

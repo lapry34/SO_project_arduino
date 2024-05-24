@@ -9,15 +9,16 @@
 int main(int argc, const char** argv) {
   int ret;
 
-  if (argc < 3) {
-    printf("serial_linux <serial_file> <baudrate> \n");
+  if (argc < 4) {
+    printf("serial_linux <serial_file> <baudrate> <file_dump> \n");
   }
   const char* serial_device = argv[1];
   int baudrate = atoi(argv[2]);
+  const char* file_dump = argv[3];
 
   int fd = serial_open(serial_device);
   serial_set_interface_attribs(fd, baudrate, 0);
-  serial_set_blocking(fd, 1);
+  serial_set_blocking(fd, 0);
 
   printf("in place\n");
   while(1) {
@@ -31,12 +32,16 @@ int main(int argc, const char** argv) {
 
     ret = write(fd, &recv, sizeof(const char));
     if (ret < 0) handle_error("write");
+    fprintf(stderr, "ret: %d\n", ret);
 
     int nchars = read(fd, &data, sizeof(Data));
+    fprintf(stderr, "nchars: %d\n", nchars);
 
     if (nchars < 0) handle_error("read");
 
     print_Data(&data);
+
+    dump_Data(&data, file_dump);
 
 
   }

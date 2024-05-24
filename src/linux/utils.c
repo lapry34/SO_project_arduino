@@ -43,3 +43,19 @@ void print_Data(Data* data) {
 
     return;
 }
+
+void dump_Data(Data* data, const char* filename) {
+    // Dump the data in the Data struct to a file
+    int ret;
+
+    FILE* file = fopen(filename, "w");
+    if (file == NULL) handle_error("fopen");
+    
+    for (int i = 0; i < MINUTES; i++) {
+        ret = fprintf(file, "%d %d\n", i, data->minutes[i]);
+        if (ret < 0) handle_error("fprintf");
+    }
+
+    ret = fclose(file);
+    if (ret < 0) handle_error("fclose");
+}
