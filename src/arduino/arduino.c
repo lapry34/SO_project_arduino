@@ -58,6 +58,8 @@ ISR(TIMER1_COMPA_vect) {
 
 // UART receive interrupt
 ISR(USART_RX_vect) {
+    disable_interrupts();
+
     unsigned char received_byte = UDR0;
 
     PORTB ^= (1 << PORTB5); // Toggle pin 13 on received byte
@@ -67,6 +69,8 @@ ISR(USART_RX_vect) {
         // Send data struct
         UART_putData(&data);
     }
+
+    enable_interrupts();
 }
 
 
