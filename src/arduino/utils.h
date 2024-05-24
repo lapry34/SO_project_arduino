@@ -14,7 +14,7 @@ typedef struct {
     uint16_t daily[DAYS];
     uint16_t monthly[MONTHS];
     uint16_t yearly;
-} Data;
+} __attribute__((packed)) Data;
 
 //struct to store time values
 typedef struct {
