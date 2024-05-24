@@ -6,7 +6,7 @@ BINS=serial_linux
 
 all: $(BINS)
 
-serial_linux:	serial_linux.c main.c
+serial_linux:	serial_linux.c main.c utils.c
 	$(CC) -$(CCOPTS) -o $@ $^  
 
 clean:
