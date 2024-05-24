@@ -16,7 +16,9 @@ void disable_interrupts(void){
 uint8_t process_time(Data *data, Time *time, uint16_t adc_value){
   //process time here...
 
+  //return 1 if we have reached the end of the hour
   uint8_t retval = 0;
+
   //we store the minutes data
   data->minutes[time->minutes] = adc_value;
 
