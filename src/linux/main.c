@@ -18,7 +18,7 @@ int main(int argc, const char** argv) {
 
   int fd = serial_open(serial_device);
   serial_set_interface_attribs(fd, baudrate, 0);
-  serial_set_blocking(fd, 0);
+  serial_set_blocking(fd, 1); //1 se bloccante, 0 altrimenti
 
   printf("in place\n");
   while(1) {
@@ -33,7 +33,9 @@ int main(int argc, const char** argv) {
     ret = write(fd, &recv, sizeof(const char));
     if (ret < 0) handle_error("write");
     fprintf(stderr, "ret: %d\n", ret);
-
+    
+    //pragma atomic force on, mettere sleep cose varie per vedere se funziona, cit prof.
+    
     int nchars = read(fd, &data, sizeof(Data));
     fprintf(stderr, "nchars: %d\n", nchars);
 
