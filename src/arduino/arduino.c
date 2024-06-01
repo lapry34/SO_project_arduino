@@ -55,7 +55,6 @@ ISR(USART_RX_vect) {
     if (received_byte == 'C') {
         memset(&data, 0, sizeof(data)); // Clear data struct
         memset(&time, 0, sizeof(time)); // Clear time struct
-        UART_putString("Data cleared\n");
     }
 
 
