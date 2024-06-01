@@ -5,8 +5,14 @@ int serial_set_interface_attribs(int fd, int speed, int parity) {
   memset (&tty, 0, sizeof tty);
   if (tcgetattr (fd, &tty) != 0) handle_error("tcgetattr");
   switch (speed){
+  case 9600:
+    speed=B9600;
+    break;
   case 19200:
     speed=B19200;
+    break;
+  case 38400:
+    speed=B38400;
     break;
   case 57600:
     speed=B57600;
