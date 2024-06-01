@@ -64,7 +64,7 @@ void UART_putBytes(void* buf, uint8_t len){
 
   uint8_t* tmp=buf;
 
-  for(uint8_t i=0;i<len;i++){
+  for(uint16_t i=0;i<len;i++){
     UART_putChar(tmp[i]);
   }
   return;

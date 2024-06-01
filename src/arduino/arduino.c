@@ -71,8 +71,7 @@ ISR(USART_RX_vect) {
     // Respond data request
     if (received_byte == 'Q') {
         // Send data struct
-        uint8_t buf_len = sizeof(Data) - sizeof(data.seconds);
-        UART_putBytes(&data, buf_len);
+        UART_putBytes(&data, sizeof(Data)); 
     }
     if (received_byte == 'C') {
         sampling_counter = 0; // Reset sampling counter
