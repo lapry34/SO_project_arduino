@@ -7,13 +7,9 @@ void setup_timer1(void) {
     TCCR1A = 0; 
     TCCR1B |= (1 << WGM12);
 
-    // Set the Compare Match Register for 1 minute
+    // Set the Compare Match Register for 1 second
     // Assuming a 16 MHz clock and a prescaler of 1024
-
-    OCR1A = 65535; // Count to 65535, the maximum value of a 16-bit register!
-    //we have to overflow and count to get a minute!
-
-    OCR1A = 300; //DEBUG!!! TOGLIERE!!!!
+    OCR1A = 15624;
 
     // Enable Timer1 compare interrupt
     TIMSK1 |= (1 << OCIE1A);
@@ -23,6 +19,7 @@ void setup_timer1(void) {
 
     return;
 }
+
 
 // Timer 2 setup to toggle LED 13
 void setup_timer2(void) {

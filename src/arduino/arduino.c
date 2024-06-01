@@ -8,7 +8,7 @@
 #include "timers.h"
 
 #define ADC_PIN 7 //a random analog pin
-#define OVERFLOW_VALUE 1 //DEBUG!!! 14 //così so 58 secondi e qualcosa
+#define OVERFLOW_VALUE 5 //DEBUG!!! 60, perché ogni secondo
 
 static uint8_t overflow_count = 0; // Variable to count overflows of timer
 
@@ -31,6 +31,7 @@ ISR(TIMER1_COMPA_vect) {
       if(flag_process == 0) time.minutes++; // Increment minute count
     }
 
+    UART_putString("Timer1 interrupt\n");
 }
 
 ISR(TIMER2_COMPA_vect) {
@@ -51,6 +52,12 @@ ISR(USART_RX_vect) {
         // Send data struct
         UART_putData(&data);
     }
+    if (received_byte == 'C') {
+        memset(&data, 0, sizeof(data)); // Clear data struct
+        memset(&time, 0, sizeof(time)); // Clear time struct
+        UART_putString("Data cleared\n");
+    }
+
 
     enable_interrupts();
 }
