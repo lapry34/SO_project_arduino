@@ -17,12 +17,12 @@ The `arduino` directory contains all the files necessary for running the current
 - **compile.sh**: Script to compile and flash the Arduino code (Atmega 328p).
 - **Makefile**: Makefile to facilitate the build process.
 - **uart.c / uart.h**: Code for UART communication.
+- **timers.c / timers.h**: Timers initialization.
 - **utils.c / utils.h**: Utility functions.
 
 Additionally, the `avr_common` subdirectory contains:
 
 - **avr.mk**: Makefile for AVR-specific settings.
-- **uart.c / uart.h**: Additional UART code shared across projects.
 
 ## Linux Directory
 
