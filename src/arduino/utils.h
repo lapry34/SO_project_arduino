@@ -29,8 +29,8 @@ typedef struct {
 } Time;
 
 //enable and disable interrupts functions
-void enable_interrupts(void);
-void disable_interrupts(void);
+#define enable_interrupts() sei()
+#define disable_interrupts() cli()
 
 //process time
 void process_time(Data *data, Time *time, uint16_t adc_value);
