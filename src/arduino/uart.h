@@ -23,5 +23,5 @@ void UART_putString(uint8_t* buf);
 void UART_putChar(uint8_t c);
 int UART_putChar_printf(char var, FILE *stream);
 
-//custom function to send data struct
-void UART_putData(Data* data);
+//custom function to send bytes
+void UART_putBytes(uint8_t* buf, uint8_t len);

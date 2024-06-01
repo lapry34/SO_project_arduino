@@ -60,13 +60,10 @@ void UART_putString(uint8_t* buf){
   return;
 }
 
-// send the data struct to the serial port (size known)
-void UART_putData(Data* data){
-  uint8_t* d=(uint8_t*)data;
-  for(uint8_t i=0;i<sizeof(Data); ++i){
-    UART_putChar(d[i]);
+void UART_putBytes(uint8_t* buf, uint8_t len){
+  for(uint8_t i=0;i<len;i++){
+    UART_putChar(buf[i]);
   }
-
   return;
 }
 

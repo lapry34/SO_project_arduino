@@ -44,8 +44,7 @@ ISR(TIMER1_COMPA_vect) {
         online_mode_counter = 0;
 
         //print the current value to the UART (online mode)
-        snprintf((char*)str_buffer, BUFFER_SIZE, "[ONLINE] Current value: %d\n", adc_value);
-        UART_putString(str_buffer);
+        UART_putBytes((uint8_t*)&adc_value, sizeof(uint16_t));
       }
     }
 }
@@ -72,7 +71,8 @@ ISR(USART_RX_vect) {
     // Respond data request
     if (received_byte == 'Q') {
         // Send data struct
-        UART_putData(&data);
+        uint8_t buf_len = sizeof(Data) - sizeof(data.seconds);
+        UART_putBytes((uint8_t*)&data, buf_len);
     }
     if (received_byte == 'C') {
         sampling_counter = 0; // Reset sampling counter
@@ -103,7 +103,6 @@ int main(void){
   setup_timer1(); // Timer 1 setup
   setup_timer2(); // Timer 2 setup to sample current sensor at 200 Hz
 
-  UART_putString((uint8_t*)"Online mode? Y (seconds) or N\n");
   UART_getString(str_buffer);
   if(str_buffer[0] == 'Y') { // Online mode enabled (seconds)
     online_mode_value = atoi((char*)str_buffer+2);
