@@ -9,7 +9,7 @@
 */
 
 #define BUF_SIZE 64
-
+#define USEC_SLEEP 5000
 //serial port file descriptor
 int fd;
 
@@ -53,7 +53,7 @@ int main(int argc, const char** argv) {
 
     while(1) {
       uint16_t adc_value = 0;
-      usleep(5000); //we wait 5ms per il meme
+      usleep(USEC_SLEEP); //we wait 5ms per il meme
 
       ret = read(fd, &adc_value, sizeof(uint16_t));
       if (ret < 0) handle_error("read");
@@ -74,7 +74,7 @@ int main(int argc, const char** argv) {
       ret = write(fd, buffer, sizeof(const char));
       if (ret < 0) handle_error("write");
       fprintf(stderr, "bytes written: %d\n", ret);
-      usleep(5000); //meme
+      usleep(USEC_SLEEP); //meme
       
       if(buffer[0] == 'Q') {
         ret = read(fd, &data, sizeof(Data));
@@ -82,6 +82,7 @@ int main(int argc, const char** argv) {
 
         if (ret < 0) handle_error("read");
 
+        //TODO check if we read the correct number of bytes
         print_Data(&data);
 
         dump_Data(&data, file_dump);
