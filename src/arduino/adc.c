@@ -7,11 +7,10 @@ void ADC_init(void) {
   // Enable ADC and set prescaler to 128
   ADCSRA = (1 << ADEN) | (1 << ADPS2) | (1 << ADPS1) | (1 << ADPS0);
 
-  //set prescaler to 256
-  ADCSRA = (1 << ADEN) | (1 << ADPS2) | (1 << ADPS1);
+  return;
 }
 
-uint16_t ADC_read(uint8_t channel) {
+uint16_t ADC_read(uint8_t channel) { //this uses POLLING!!! we can move to use interrupts???
 
   //truncate channel to 0-7 interval (8 channels)
   channel &= 0x07;
