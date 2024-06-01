@@ -2,6 +2,7 @@
 
 #include <avr/interrupt.h>
 
+#define SECONDS 60
 #define MINUTES 60
 #define HOURS 24
 #define DAYS 30
@@ -9,6 +10,7 @@
 
 // Struct to store the time averages
 typedef struct {
+    uint16_t seconds[SECONDS];
     uint16_t minutes[MINUTES];
     uint16_t hourly[HOURS];
     uint16_t daily[DAYS];
@@ -18,6 +20,7 @@ typedef struct {
 
 //struct to store time values
 typedef struct {
+    uint8_t seconds;
     uint8_t minutes;
     uint8_t hours;
     uint8_t days;
@@ -29,5 +32,5 @@ typedef struct {
 void enable_interrupts(void);
 void disable_interrupts(void);
 
-//process time and returns true if the hour has changed
-uint8_t process_time(Data *data, Time *time, uint16_t adc_value);
+//process time
+void process_time(Data *data, Time *time, uint16_t adc_value);

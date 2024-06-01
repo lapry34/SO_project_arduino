@@ -13,14 +13,27 @@ void disable_interrupts(void){
 //others useful things here...
 
 //process time
-uint8_t process_time(Data *data, Time *time, uint16_t adc_value){
+void process_time(Data *data, Time *time, uint16_t adc_value){
   //process time here...
 
-  //return 1 if we have reached the end of the hour
-  uint8_t retval = 0;
+  //we store the seconds data
+  data->seconds[time->seconds] = adc_value;
 
-  //we store the minutes data
-  data->minutes[time->minutes] = adc_value;
+  time->seconds += 1;
+
+  //when we reach the end of the minute, we reset the seconds and increment the minute
+  if(time->seconds > SECONDS -1){
+    time->seconds = 0;
+
+    //we store the minute data which is the average of the seconds
+    uint16_t sum = 0;
+    for(uint8_t i = 0; i < SECONDS; i++){
+      sum += data->seconds[i];
+    }
+    data->minutes[time->minutes] = sum / SECONDS;
+
+    time->minutes += 1;
+  }
 
   //when we reach the end of the hour, we reset the minutes and increment the hour
   if(time->minutes > MINUTES -1){
@@ -34,7 +47,6 @@ uint8_t process_time(Data *data, Time *time, uint16_t adc_value){
     data->hourly[time->hours] = sum / MINUTES;
 
     time->hours += 1;
-    retval = 1;
   }
 
   //when we reach the end of the day, we reset the hours and increment the day
@@ -79,5 +91,5 @@ uint8_t process_time(Data *data, Time *time, uint16_t adc_value){
     time->years += 1;
   }
 
-  return retval;
+  return;
 }
