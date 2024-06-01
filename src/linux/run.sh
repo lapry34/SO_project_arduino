@@ -1,1 +1,1 @@
-./serial_linux /dev/ttyUSB0 19200 data.gnuplot
+./serial_linux /dev/ttyUSB0 57600 data.gnuplot

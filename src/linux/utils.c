@@ -20,6 +20,13 @@ void print_Data(Data* data) {
 
     assert(data != NULL && "data ptr is NULL");
     
+    printf("Seconds: ");
+    for (int i = 0; i < SECONDS; i++) {
+        printf("%d ", data->seconds[i]);
+    }
+
+    printf("\n");
+
     printf("Minutes: ");
     for (int i = 0; i < MINUTES; i++) {
         printf("%d ", data->minutes[i]);
