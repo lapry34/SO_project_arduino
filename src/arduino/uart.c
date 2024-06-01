@@ -1,5 +1,7 @@
 #include "uart.h"
 
+static FILE uart_stdout = FDEV_SETUP_STREAM(UART_putChar_printf, NULL, _FDEV_SETUP_WRITE);
+
 void UART_init(void){
   // Set baud rate
   UBRR0H = (uint8_t)(MYUBRR>>8);
@@ -8,6 +10,7 @@ void UART_init(void){
   UCSR0C = (1<<UCSZ01) | (1<<UCSZ00); /* 8-bit data */ 
   UCSR0B = (1<<RXEN0) | (1<<TXEN0) | (1<<RXCIE0);   /* Enable RX and TX */  
 
+  return;
 }
 
 void UART_putChar(uint8_t c){
@@ -16,6 +19,8 @@ void UART_putChar(uint8_t c){
 
   // Start transmission
   UDR0 = c;
+
+  return;
 }
 
 uint8_t UART_getChar(void){
@@ -24,7 +29,6 @@ uint8_t UART_getChar(void){
   
   // Return the data
   return UDR0;
-    
 }
 
 // reads a string until the first newline or 0
@@ -53,12 +57,29 @@ void UART_putString(uint8_t* buf){
     UART_putChar(*buf);
     ++buf;
   }
+  return;
 }
 
 // send the data struct to the serial port (size known)
 void UART_putData(Data* data){
   uint8_t* d=(uint8_t*)data;
-  for(uint8_t i=0;i<sizeof(Data);++i){
+  for(uint8_t i=0;i<sizeof(Data); ++i){
     UART_putChar(d[i]);
   }
+
+  return;
 }
+
+// this function is called by printf as a stream handler
+int UART_putChar_printf(char var, FILE *stream) {
+    // translate \n to \r for br@y++ terminal
+    if (var == '\n') UART_putChar('\r');
+    UART_putChar(var);
+    return 0;
+}
+
+void printf_init(void){
+  stdout = &uart_stdout;
+  return;
+}
+
