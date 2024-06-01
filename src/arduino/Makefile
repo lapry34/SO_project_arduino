@@ -29,10 +29,10 @@ BINS=arduino.elf
 
 # put here the additional .o files you want to generate
 # one .c file for each .o should be present
-OBJS=uart.o adc.o utils.o
+OBJS=uart.o adc.o utils.o timers.o
 
 # put here the additional header files needed for compilation
-HEADERS=uart.h adc.h utils.h
+HEADERS=uart.h adc.h utils.h timers.h
 
 
 # the file below contains the actual rules

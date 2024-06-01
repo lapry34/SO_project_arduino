@@ -5,6 +5,7 @@
 #include "utils.h"
 #include "uart.h"
 #include "adc.h"
+#include "timers.h"
 
 #define ADC_PIN 7 //a random analog pin
 #define OVERFLOW_VALUE 1 //DEBUG!!! 14 //così so 58 secondi e qualcosa
@@ -17,31 +18,7 @@ Time time = {0}; //initialize all to 0
 //Data struct
 Data data = {0}; //initialize all to 0
 
-// Timer setup
-void setup_timer(void) {
-
-    // Set Timer to CTC (Clear Timer on Compare Match) mode
-    TCCR1A = 0; 
-    TCCR1B |= (1 << WGM12);
-
-    // Set the Compare Match Register for 1 minute
-    // Assuming a 16 MHz clock and a prescaler of 1024
-
-    OCR1A = 65535; // Count to 65535, the maximum value of a 16-bit register!
-    //we have to overflow and count to get a minute!
-
-    OCR1A = 300; //DEBUG!!! TOGLIERE!!!!
-
-    // Enable Timer1 compare interrupt
-    TIMSK1 |= (1 << OCIE1A);
-
-    // Start Timer1 with prescaler 1024
-    TCCR1B |= (1 << CS12) | (1 << CS10);
-
-    return;
-}
-
-// Timer interrupt
+// Timer1 interrupt
 ISR(TIMER1_COMPA_vect) {
     overflow_count++;
     if (overflow_count >= OVERFLOW_VALUE) {  // Check for overflows
@@ -54,6 +31,11 @@ ISR(TIMER1_COMPA_vect) {
       if(flag_process == 0) time.minutes++; // Increment minute count
     }
 
+}
+
+ISR(TIMER2_COMPA_vect) {
+    // Toggle LED 13
+    PORTB ^= (1 << PORTB5);
 }
 
 // UART receive interrupt
@@ -85,8 +67,9 @@ int main(void){
   // Set pin 13 as output
   DDRB |= (1 << DDB5);
 
-  // initialize timer
-  setup_timer();
+  // initialize timers
+  setup_timer1();
+  //setup_timer2(); TODO: use it to sample current sensor
 
   //end init
   enable_interrupts();
