@@ -44,7 +44,7 @@ ISR(TIMER1_COMPA_vect) {
         online_mode_counter = 0;
 
         //print the current value to the UART (online mode)
-        UART_putBytes((uint8_t*)&adc_value, sizeof(uint16_t));
+        UART_putBytes(&adc_value, sizeof(uint16_t));
       }
     }
 }
@@ -72,7 +72,7 @@ ISR(USART_RX_vect) {
     if (received_byte == 'Q') {
         // Send data struct
         uint8_t buf_len = sizeof(Data) - sizeof(data.seconds);
-        UART_putBytes((uint8_t*)&data, buf_len);
+        UART_putBytes(&data, buf_len);
     }
     if (received_byte == 'C') {
         sampling_counter = 0; // Reset sampling counter
