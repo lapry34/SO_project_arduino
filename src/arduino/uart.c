@@ -60,7 +60,7 @@ void UART_putString(uint8_t* buf){
   return;
 }
 
-void UART_putBytes(void* buf, uint8_t len){
+void UART_putBytes(void* buf, uint16_t len){
 
   uint8_t* tmp=buf;
 

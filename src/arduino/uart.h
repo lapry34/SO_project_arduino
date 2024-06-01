@@ -24,4 +24,4 @@ void UART_putChar(uint8_t c);
 int UART_putChar_printf(char var, FILE *stream);
 
 //custom function to send bytes
-void UART_putBytes(void* buf, uint8_t len);
+void UART_putBytes(void* buf, uint16_t len);
