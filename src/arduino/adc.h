@@ -4,6 +4,9 @@
 
 #include <avr/io.h>
 
+#define ADC_PIN 3 //a random analog pin
+#define SAMPL_FREQ 200 // Sampling frequency 200Hz
+
 //init adc
 void ADC_init(void);
 

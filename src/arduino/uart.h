@@ -21,7 +21,7 @@ uint8_t UART_getString(uint8_t* buf);
 //send data functions
 void UART_putString(uint8_t* buf);
 void UART_putChar(uint8_t c);
-void UART_putChar_printf(char c, FILE* stream);
+int UART_putChar_printf(char var, FILE *stream);
 
 //custom function to send data struct
 void UART_putData(Data* data);

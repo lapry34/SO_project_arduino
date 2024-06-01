@@ -10,11 +10,8 @@
 #include "adc.h"
 #include "timers.h"
 
-#define ADC_PIN 3 //a random analog pin
-#define OVERFLOW_VALUE 5 //DEBUG!!! 60, perché ogni secondo
-#define BUFFER_SIZE 100 // Buffer size for UART communication
 
-#define SAMPL_FREQ 200 // Sampling frequency 200Hz
+#define BUFFER_SIZE 100 // Buffer size for UART communication
 
 static uint8_t online_mode_counter = 0; // Variable to count seconds in online mode
 static uint8_t sampling_counter = 0; // Variable to count samples for current sensor
@@ -30,18 +27,14 @@ Time time = {0}; //initialize all to 0
 //Data struct
 Data data = {0}; //initialize all to 0
 
-// Timer1 interrupt
+// Timer1 interrupt, every 1 second
 ISR(TIMER1_COMPA_vect) {
-
-    // Toggle LED 13
-    PORTB ^= (1 << PORTB5);
 
     //evaluate the mean of the samples
     uint16_t adc_value = 0;
     for(uint8_t i = 0; i < SAMPL_FREQ; i++){
         adc_value += (adc_buffer[i] / SAMPL_FREQ); //we divide by the number of samples to avoid overflow
     }
-    memset(&adc_buffer, 0, sizeof(adc_buffer)); // Clear ADC buffer, Probabilmente non serve, ragionare
 
     process_time(&data, &time, adc_value);
 
@@ -57,6 +50,7 @@ ISR(TIMER1_COMPA_vect) {
     }
 }
 
+// Timer2 interrupt, every 5ms (200Hz)
 ISR(TIMER2_COMPA_vect) {
     // Sample current sensor
     adc_buffer[sampling_counter] = ADC_read(ADC_PIN);
@@ -99,6 +93,7 @@ int main(void){
   disable_interrupts();
 
   UART_init();
+  printf_init();
   ADC_init();
 
   // Set pin 13 as output
