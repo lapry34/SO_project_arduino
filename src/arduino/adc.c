@@ -13,6 +13,9 @@ void ADC_init(void) {
 
 uint16_t ADC_read(uint8_t channel) {
 
+  //truncate channel to 0-7 interval (8 channels)
+  channel &= 0x07;
+
   // Select ADC channel pin
   ADMUX = (ADMUX & 0xF0) | (channel & 0x0F);
   
