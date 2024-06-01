@@ -4,9 +4,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
+#include <assert.h>
 
-
-#define SECONDS 60
 #define MINUTES 60
 #define HOURS 24
 #define DAYS 30
@@ -19,7 +18,6 @@ do { perror(msg); exit(EXIT_FAILURE); } while (0)
 
 // Struct to store the time averages
 typedef struct {
-    uint16_t seconds[SECONDS];
     uint16_t minutes[MINUTES];
     uint16_t hourly[HOURS];
     uint16_t daily[DAYS];

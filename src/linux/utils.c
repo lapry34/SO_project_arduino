@@ -3,6 +3,9 @@
 
 void serial_readData(int fd, Data* data) {
     // Read the data from the serial port
+
+    assert(data != NULL && "data ptr is NULL");
+    assert(fd >= 0 && "fd is negative");
     
     int nchars = read(fd, data, sizeof(Data));
 
@@ -14,6 +17,8 @@ void serial_readData(int fd, Data* data) {
 
 void print_Data(Data* data) {
     // Print the data in the Data struct
+
+    assert(data != NULL && "data ptr is NULL");
     
     printf("Minutes: ");
     for (int i = 0; i < MINUTES; i++) {
@@ -47,6 +52,8 @@ void print_Data(Data* data) {
 void dump_Data(Data* data, const char* filename) {
     // Dump the data in the Data struct to a file
     int ret;
+
+    assert(filename != NULL && "filename is NULL");
 
     FILE* file = fopen(filename, "w");
     if (file == NULL) handle_error("fopen");
