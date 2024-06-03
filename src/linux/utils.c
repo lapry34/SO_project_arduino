@@ -66,7 +66,7 @@ void dump_Data(Data* data, const char* filename) {
     if (file == NULL) handle_error("fopen");
     
     for (int i = 0; i < MINUTES; i++) {
-        ret = fprintf(file, "%d %d\n", i, data->minutes[i]);
+        ret = fprintf(file, "%d %d\n", i, data->minutes[i]); //fprintf controls EINTR error internally
         if (ret < 0) handle_error("fprintf");
     }
 
