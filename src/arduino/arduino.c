@@ -50,7 +50,7 @@ ISR(TIMER1_COMPA_vect) {
 }
 
 // Timer2 interrupt, every 5ms (200Hz)
-ISR(TIMER2_COMPA_vect) {
+ISR(TIMER2_COMPA_vect) { //TODO: SPOSTARE a 1KHz, trovare picchi di corrente massimi e minimi per calcolare cose.
     // Sample current sensor
     adc_buffer[sampling_counter] = ADC_read(ADC_PIN);
     sampling_counter++;
@@ -71,6 +71,8 @@ ISR(USART_RX_vect) {
     // Respond data request
     if (received_byte == 'Q') {
         // Send data struct
+
+        //TODO: mettere un flag che si alza quando c'è da stampare, così da consumare meno tempo in ISR
         UART_putBytes(&data, sizeof(Data)); 
     }
     if (received_byte == 'C') {
@@ -112,6 +114,9 @@ int main(void){
 
   while(1) {
     // we go to sleep
+
+    //TODO: spostare qui la stampa dei putBytes con un flag che si alza quando c'è da stampare
+
     sleep_cpu();
   }
 
