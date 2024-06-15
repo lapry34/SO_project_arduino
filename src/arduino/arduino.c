@@ -11,12 +11,13 @@
 #include "timers.h"
 
 
-#define BUFFER_SIZE 100 // Buffer size for UART communication
+#define BUFFER_SIZE 512 // Buffer size for UART communication
 
 static uint8_t online_mode_counter = 0; // Variable to count seconds in online mode
 static uint8_t sampling_counter = 0; // Variable to count samples for current sensor
 
 static uint8_t str_buffer[BUFFER_SIZE] = {0}; // Buffer to store string data
+static uint16_t buffer_len = 0; // Flag to indicate buffer is ready to be sent
 static int8_t online_mode_value = -1;
 
 static uint16_t adc_buffer[SAMPL_FREQ] = {0}; // Buffer to store ADC values
@@ -44,7 +45,12 @@ ISR(TIMER1_COMPA_vect) {
         online_mode_counter = 0;
 
         //print the current value to the UART (online mode)
-        UART_putBytes(&adc_value, sizeof(uint16_t));
+        
+        memcpy(str_buffer, &adc_value, sizeof(uint16_t));
+        str_buffer[sizeof(uint16_t)] = '\r';
+        str_buffer[sizeof(uint16_t) + 1] = '\n';
+        buffer_len = sizeof(uint16_t) + 2;
+        UART_putBytes(str_buffer, buffer_len);
       }
     }
 }
@@ -73,9 +79,13 @@ ISR(USART_RX_vect) {
         // Send data struct
 
         //TODO: mettere un flag che si alza quando c'è da stampare, così da consumare meno tempo in ISR
-        UART_putBytes(&data, sizeof(Data)); 
+        memcpy(str_buffer, &data, sizeof(Data));
+        str_buffer[sizeof(Data)] = '\r'; 
+        str_buffer[sizeof(Data) + 1] = '\n'; 
+        buffer_len = sizeof(Data) + 2;
+        UART_putBytes(str_buffer, buffer_len);
     }
-    if (received_byte == 'C') {
+    else if (received_byte == 'C') {
         sampling_counter = 0; // Reset sampling counter
         online_mode_counter = 0; // Reset online mode counter
         memset(&adc_buffer, 0, sizeof(adc_buffer)); // Clear ADC buffer

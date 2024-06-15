@@ -8,7 +8,7 @@
   serial_linux <serial_file> <baudrate> <file_dump>
 */
 
-#define BUF_SIZE 64
+#define BUF_SIZE 512
 #define USEC_SLEEP 5000
 //serial port file descriptor
 int fd;
@@ -16,7 +16,7 @@ int fd;
 
 //install signal handler to CTRL+C to close the serial port
 void signal_handler(int signum) {
-  fprintf(stderr, "Caught signal SIGINT");
+  fprintf(stderr, "Caught signal SIGINT\n");
   close(fd);
   exit(EXIT_SUCCESS);
 }
@@ -53,11 +53,13 @@ int main(int argc, const char** argv) {
 
     while(1) {
       uint16_t adc_value = 0;
+      memset(buffer, 0, BUF_SIZE);
       usleep(USEC_SLEEP); //we wait 5ms per il meme
 
-      ret = read(fd, &adc_value, sizeof(uint16_t));
+      ret = read(fd, buffer, sizeof(uint16_t)+2);
       if (ret < 0) handle_error("read");
       printf("bytes read: %d\n", ret);
+      adc_value = *(uint16_t*)buffer;
       printf("buffer: %d\n", adc_value);
     } 
 
@@ -77,10 +79,12 @@ int main(int argc, const char** argv) {
       usleep(USEC_SLEEP); //meme
       
       if(buffer[0] == 'Q') {
-        ret = read(fd, &data, sizeof(Data));
+        memset(buffer, 0, BUF_SIZE); // puliamo il buffer per sicurezza, anche se lo stiamo sovrascrivendo
+        ret = read(fd, &buffer, sizeof(Data)+2);
         printf("bytes read: %d\n", ret);
-
         if (ret < 0) handle_error("read");
+
+        data = *(Data*)buffer;
 
         //TODO check if we read the correct number of bytes
         print_Data(&data);
