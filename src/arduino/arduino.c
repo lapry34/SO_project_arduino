@@ -47,16 +47,15 @@ ISR(TIMER1_COMPA_vect) {
         //print the current value to the UART (online mode)
         
         memcpy(str_buffer, &adc_value, sizeof(uint16_t));
-        str_buffer[sizeof(uint16_t)] = '\r';
-        str_buffer[sizeof(uint16_t) + 1] = '\n';
-        buffer_len = sizeof(uint16_t) + 2;
+        str_buffer[sizeof(uint16_t)] = '\n';
+        buffer_len = sizeof(uint16_t) + 1;
         UART_putBytes(str_buffer, buffer_len);
       }
     }
 }
 
-// Timer2 interrupt, every 5ms (200Hz)
-ISR(TIMER2_COMPA_vect) { //TODO: SPOSTARE a 1KHz, trovare picchi di corrente massimi e minimi per calcolare cose.
+// Timer2 interrupt, every 1ms (1kHz)
+ISR(TIMER2_COMPA_vect) { //rovare picchi di corrente massimi e minimi per calcolare cose.
     // Sample current sensor
     adc_buffer[sampling_counter] = ADC_read(ADC_PIN);
     sampling_counter++;
@@ -80,9 +79,8 @@ ISR(USART_RX_vect) {
 
         //TODO: mettere un flag che si alza quando c'è da stampare, così da consumare meno tempo in ISR
         memcpy(str_buffer, &data, sizeof(Data));
-        str_buffer[sizeof(Data)] = '\r'; 
-        str_buffer[sizeof(Data) + 1] = '\n'; 
-        buffer_len = sizeof(Data) + 2;
+        str_buffer[sizeof(Data)] = '\n'; 
+        buffer_len = sizeof(Data) + 1;
         UART_putBytes(str_buffer, buffer_len);
     }
     else if (received_byte == 'C') {
@@ -112,7 +110,7 @@ int main(void){
 
   // initialize timers
   setup_timer1(); // Timer 1 setup
-  setup_timer2(); // Timer 2 setup to sample current sensor at 200 Hz
+  setup_timer2(); // Timer 2 setup to sample current sensor at 1kHz
 
   UART_getString(str_buffer);
   if(str_buffer[0] == 'Y') { // Online mode enabled (seconds)

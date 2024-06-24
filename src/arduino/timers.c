@@ -21,19 +21,20 @@ void setup_timer1(void) {
 }
 
 
-// Timer 2 setup to sample current sensor at 200 Hz
+// Timer 2 setup to sample current sensor at 1kHz
 void setup_timer2(void) {
     // Set Timer2 to CTC (Clear Timer on Compare Match) mode
     TCCR2A |= (1 << WGM21);
     TCCR2B = 0;
 
-    // Set Compare Match Register for 200 Hz
-    OCR2A = 124;  // Assuming a 16 MHz clock and prescaler of 64, this gives 200 Hz
+    // Set Compare Match Register for 1 kHz
+    OCR2A = 249;  // Assuming a 16 MHz clock and prescaler of 64, this gives 1 kHz
 
     // Enable Timer2 compare interrupt
     TIMSK2 |= (1 << OCIE2A);
 
     // Start Timer2 with prescaler 64
     TCCR2B |= (1 << CS22); // CS22 = 1, CS21 = 0, CS20 = 0 => Prescaler = 64
-}
 
+    return;
+}

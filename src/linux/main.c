@@ -56,7 +56,7 @@ int main(int argc, const char** argv) {
       memset(buffer, 0, BUF_SIZE);
       usleep(USEC_SLEEP); //we wait 5ms per il meme
 
-      ret = read(fd, buffer, sizeof(uint16_t)+2);
+      ret = read(fd, buffer, sizeof(uint16_t)+1);
       if (ret < 0) handle_error("read");
       printf("bytes read: %d\n", ret);
       adc_value = *(uint16_t*)buffer;
@@ -69,7 +69,8 @@ int main(int argc, const char** argv) {
     
       //read from stdin any character
       memset(buffer, 0, BUF_SIZE);
-      if ( (fgets(buffer, BUF_SIZE, stdin) != buffer) ) handle_error("fgets from stdin");
+      if ( (fgets(buffer, BUF_SIZE, stdin) != buffer) ) handle_error("fgets from stdin"); //fgets returns NULL if error or EOF
+      //fgets adds a newline character at the end of the string
 
 
       Data data = {0};
@@ -80,7 +81,7 @@ int main(int argc, const char** argv) {
       
       if(buffer[0] == 'Q') {
         memset(buffer, 0, BUF_SIZE); // puliamo il buffer per sicurezza, anche se lo stiamo sovrascrivendo
-        ret = read(fd, &buffer, sizeof(Data)+2);
+        ret = read(fd, &buffer, sizeof(Data)+1);
         printf("bytes read: %d\n", ret);
         if (ret < 0) handle_error("read");
 
