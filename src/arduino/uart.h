@@ -7,7 +7,7 @@
 
 #include "utils.h"
 
-#define BAUD 57600
+#define BAUD 19200
 #define MYUBRR (F_CPU/16/BAUD-1)
 
 //initialize UART
