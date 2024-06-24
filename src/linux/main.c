@@ -16,9 +16,11 @@ int fd;
 
 //install signal handler to CTRL+C to close the serial port
 void signal_handler(int signum) {
-  fprintf(stderr, "Caught signal SIGINT\n");
-  close(fd);
-  exit(EXIT_SUCCESS);
+  if(signum == SIGINT) {
+    fprintf(stderr, "Caught signal SIGINT, exiting gracefully...\n");
+    close(fd);
+    exit(EXIT_SUCCESS);
+  }
 }
 
 int main(int argc, const char** argv) {
@@ -27,7 +29,9 @@ int main(int argc, const char** argv) {
   signal(SIGINT, signal_handler);
 
   if (argc < 4) {
-    printf("serial_linux <serial_file> <baudrate> <file_dump>\n");
+    fprintf(stderr, "Invalid Arguments! \nUsage: \n");
+    fprintf(stderr, "serial_linux <serial_file> <baudrate> <file_dump>\n");
+    exit(EXIT_FAILURE);
   }
   const char* serial_device = argv[1];
   int baudrate = atoi(argv[2]);
