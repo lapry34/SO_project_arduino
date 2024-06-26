@@ -41,6 +41,10 @@ HEADERS=uart.h adc.h utils.h timers.h
 
 include ./avr_common/avr.mk
 
-
+all:
+	$(MAKE) clean
+	$(MAKE) arduino.elf
+	$(MAKE) arduino.hex
+	$(MAKE) clean
 
 

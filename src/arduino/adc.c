@@ -27,3 +27,7 @@ uint16_t ADC_read(uint8_t channel) { //this uses POLLING!!! we can move to use i
   // Return the converted digital value
   return ADC;
 }
+/*
+ISR(ADC_vect) { BOH CE PROVAMO?
+  // Your code here
+}*/

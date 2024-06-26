@@ -34,7 +34,7 @@ Data data = {0}; //initialize all to 0
 ISR(TIMER1_COMPA_vect) {
 
     //evaluate the Vrms from Vpp TODO: add V_bias 
-    uint16_t V_rms = ((V_max-V_min) >> 2) * ROOT_TWO //(V_max - V_min) / (2 * 1.414);
+    uint16_t V_rms = ((V_max-V_min) >> 2) * ROOT_TWO; //(V_max - V_min) / (2 * 1.414);
     process_time(&data, &time, V_rms);
 
     if (online_mode_value != -1) {
