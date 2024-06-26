@@ -31,6 +31,13 @@ ifeq ($(TARGET), uno)
     AVRDUDE_BOOTLOADER = arduino
 endif
 
+ifeq ($(TARGET), leonardo)
+	CC_OPTS_GLOBAL += -mmcu=atmega32u4
+	AVRDUDE_FLAGS  += -p m32u4
+	AVRDUDE_BAUDRATE = 57600
+	AVRDUDE_BOOTLOADER = avr109
+endif
+
 CC_OPTS=$(CC_OPTS_GLOBAL) --std=gnu99 
 CXX_OPTS=$(CC_OPTS_GLOBAL) --std=c++17 
 AS_OPTS=-x assembler-with-cpp $(CC_OPTS)
