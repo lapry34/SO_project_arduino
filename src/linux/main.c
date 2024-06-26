@@ -13,7 +13,6 @@
 //serial port file descriptor
 int fd;
 
-
 //install signal handler to CTRL+C to close the serial port
 void signal_handler(int signum) {
   if(signum == SIGINT) {
@@ -66,7 +65,9 @@ int main(int argc, const char** argv) {
 
       printf("bytes read: %d\n", ret);
       current_value = *(uint16_t*)buffer;
-      printf("current value (mA) : %d\n", current_value);
+
+      float current_mA = predict_mA(current_value);
+      printf("current value (mA) : %4.3f\n", current_mA);
     } 
 
   } else {

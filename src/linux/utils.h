@@ -13,6 +13,10 @@
 #define DAYS 30
 #define MONTHS 12
 
+// advanced machine learning model
+#define SLOPE 4.600768573868488
+#define INTERCEPT -74.82664389410759
+
 // Error handling
 #define handle_error(msg) \
 do { perror(msg); exit(EXIT_FAILURE); } while (0)
@@ -36,3 +40,9 @@ void print_Data(Data* data);
 
 //dump data to file
 void dump_Data(Data* data, const char* filename);
+
+//advanced machine learning model to predict current in mA
+float predict_mA(uint16_t value);
+
+
+

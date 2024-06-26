@@ -22,36 +22,36 @@ void print_Data(Data* data) {
     
     printf("Seconds: ");
     for (int i = 0; i < SECONDS; i++) {
-        printf("%d ", data->seconds[i]);
+        printf("%f ", predict_mA(data->seconds[i]));
     }
 
     printf("\n");
 
     printf("Minutes: ");
     for (int i = 0; i < MINUTES; i++) {
-        printf("%d ", data->minutes[i]);
+        printf("%f ", predict_mA(data->minutes[i]));
     }
     printf("\n");
 
     printf("Hourly: ");
     for (int i = 0; i < HOURS; i++) {
-        printf("%d ", data->hourly[i]);
+        printf("%f ", predict_mA(data->hourly[i]));
     }
     printf("\n");
 
     printf("Daily: ");
     for (int i = 0; i < DAYS; i++) {
-        printf("%d ", data->daily[i]);
+        printf("%f ", predict_mA(data->daily[i]));
     }
     printf("\n");
 
     printf("Monthly: ");
     for (int i = 0; i < MONTHS; i++) {
-        printf("%d ", data->monthly[i]);
+        printf("%f ", predict_mA(data->monthly[i]));
     }
     printf("\n");
 
-    printf("Yearly: %d\n", data->yearly);
+    printf("Yearly: %f ", predict_mA(data->yearly));
 
     return;
 }
@@ -66,11 +66,18 @@ void dump_Data(Data* data, const char* filename) {
     FILE* file = fopen(filename, "w");
     if (file == NULL) handle_error("fopen");
     
-    for (int i = 0; i < MINUTES; i++) {
-        ret = fprintf(file, "%d %d\n", i, data->minutes[i]); //fprintf controls EINTR error internally
+    for (int i = 0; i < SECONDS; i++) {
+        float current_mA = predict_mA(data->seconds[i]);
+        ret = fprintf(file, "%d %3.4f\n", i, current_mA); //fprintf controls EINTR error internally
         if (ret < 0) handle_error("fprintf");
     }
 
     ret = fclose(file);
     if (ret < 0) handle_error("fclose");
+}
+
+//advanced machine learning model to predict current in mA
+float predict_mA(uint16_t value) {
+  float current_mA = (float)value * SLOPE + INTERCEPT;
+  return current_mA < 0 ? 0 : current_mA;
 }
