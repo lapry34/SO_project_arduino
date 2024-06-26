@@ -26,11 +26,12 @@ void signal_handler(int signum) {
 int main(int argc, const char** argv) {
   int ret;
 
-  signal(SIGINT, signal_handler);
+  __sighandler_t sighandler = signal(SIGINT, signal_handler);
+  if (sighandler == SIG_ERR) handle_error("signal");
 
   if (argc < 4) {
-    fprintf(stderr, "Invalid Arguments! \nUsage: \n");
-    fprintf(stderr, "serial_linux <serial_file> <baudrate> <file_dump>\n");
+    fprintf(stderr, "Invalid Arguments! \n");
+    fprintf(stderr, "usage: serial_linux <serial_file> <baudrate> <file_dump>\n");
     exit(EXIT_FAILURE);
   }
   const char* serial_device = argv[1];
@@ -56,15 +57,16 @@ int main(int argc, const char** argv) {
     printf("ONLINE MODE\n");
 
     while(1) {
-      uint16_t adc_value = 0;
+      uint16_t current_value = 0;
       memset(buffer, 0, BUF_SIZE);
       usleep(USEC_SLEEP); //we wait 5ms per il meme
 
-      ret = read(fd, buffer, sizeof(uint16_t)+1);
+      ret = read(fd, buffer, sizeof(uint16_t)+sizeof(char));
       if (ret < 0) handle_error("read");
+
       printf("bytes read: %d\n", ret);
-      adc_value = *(uint16_t*)buffer;
-      printf("buffer: %d\n", adc_value);
+      current_value = *(uint16_t*)buffer;
+      printf("current value (mA) : %d\n", current_value);
     } 
 
   } else {
@@ -85,16 +87,22 @@ int main(int argc, const char** argv) {
       
       if(buffer[0] == 'Q') {
         memset(buffer, 0, BUF_SIZE); // puliamo il buffer per sicurezza, anche se lo stiamo sovrascrivendo
-        ret = read(fd, &buffer, sizeof(Data)+1);
-        printf("bytes read: %d\n", ret);
+        ret = read(fd, &buffer, sizeof(Data)+sizeof(char));
         if (ret < 0) handle_error("read");
 
         data = *(Data*)buffer;
 
         //TODO check if we read the correct number of bytes
-        print_Data(&data);
+        if(ret != sizeof(Data)+sizeof(char)) {
+          fprintf(stderr, "Error: read %d bytes, expected %lu\n", ret, sizeof(Data)+sizeof(char));
+          continue;
+        }
+        else {
+          fprintf(stderr, "Data received correctly\n");
+          print_Data(&data);
+          dump_Data(&data, file_dump);
+        }
 
-        dump_Data(&data, file_dump);
       }
     }
 

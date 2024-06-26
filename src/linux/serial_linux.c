@@ -56,8 +56,10 @@ void serial_set_blocking(int fd, int should_block) {
   if (tcsetattr (fd, TCSANOW, &tty) != 0) handle_error("tcsetattr");
 }
 
-int serial_open(const char* name) {
-  int fd = open (name, O_RDWR | O_NOCTTY | O_SYNC );
+int serial_open(const char* serial_name) {
+
+  assert(serial_name != NULL && "serial_name is NULL");
+  int fd = open (serial_name, O_RDWR | O_NOCTTY | O_SYNC );
   if (fd < 0) handle_error("open");
   return fd;
 }

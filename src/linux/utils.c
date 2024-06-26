@@ -60,6 +60,7 @@ void dump_Data(Data* data, const char* filename) {
     // Dump the data in the Data struct to a file
     int ret;
 
+    assert(data != NULL && "data ptr is NULL");
     assert(filename != NULL && "filename is NULL");
 
     FILE* file = fopen(filename, "w");
