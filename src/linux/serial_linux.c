@@ -1,8 +1,8 @@
 #include "serial_linux.h"
 
 int serial_set_interface_attribs(int fd, int speed, int parity) {
-  struct termios tty;
-  memset (&tty, 0, sizeof tty);
+  struct termios tty = {0};
+
   if (tcgetattr (fd, &tty) != 0) handle_error("tcgetattr");
   switch (speed){
   case 9600:
@@ -42,12 +42,12 @@ int serial_set_interface_attribs(int fd, int speed, int parity) {
   tty.c_cflag = (tty.c_cflag & ~CSIZE) | CS8;      // 8-bit chars
 
   if (tcsetattr (fd, TCSANOW, &tty) != 0) handle_error("tcsetattr");
+  if (tcflush(fd, TCIOFLUSH) != 0) handle_error("tcflush");
   return 0;
 }
 
 void serial_set_blocking(int fd, int should_block) {
-  struct termios tty;
-  memset (&tty, 0, sizeof tty);
+  struct termios tty = {0};
   if (tcgetattr (fd, &tty) != 0) handle_error("tcgetattr");
 
   tty.c_cc[VMIN]  = should_block ? 1 : 0;
