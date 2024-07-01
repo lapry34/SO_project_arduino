@@ -5,7 +5,7 @@ This project is designed for an operating systems course and involves using an A
 
 ## Project Structure
 
-The project is organized into two main directories: `arduino` and `linux`.
+The project is organized into three main directories: `arduino`, `linux` and `ML`.
 
 
 ## Arduino Directory
@@ -14,27 +14,27 @@ The `arduino` directory contains all the files necessary for running the current
 
 - **adc.c / adc.h**: Code for the Analog-to-Digital Converter.
 - **arduino.c**: Main file for Arduino operations.
-- **compile.sh**: Script to compile and flash the Arduino code (Atmega 328p).
-- **Makefile**: Makefile to facilitate the build process.
+- **Makefile**: Makefile to facilitate the build process
+- **avr.mk**: Makefile for AVR-specific settings.
 - **uart.c / uart.h**: Code for UART communication.
 - **timers.c / timers.h**: Timers initialization.
 - **utils.c / utils.h**: Utility functions.
-
-Additionally, the `avr_common` subdirectory contains:
-
-- **avr.mk**: Makefile for AVR-specific settings.
 
 ## Linux Directory
 
 The `linux` directory contains the files needed to compile, run, and plot data on a Linux system. Key files include:
 
-- **compile.sh**: Script to compile the Linux code.
 - **main.c**: Main file for Linux-side operations.
 - **Makefile**: Makefile to facilitate the build process.
 - **plot.sh**: Script to plot the collected data.
-- **run.sh**: Script to run the main program and save data.
 - **serial_linux.c / serial_linux.h**: Code for serial communication with the Arduino.
 - **utils.c / utils.h**: Utility functions.
+
+## ML Directory
+
+The `ML` directory contains the files needed to train a Linear Regression model to fit the sample measuraments:
+- **weights.py**: Script to train the ML model using Sklearn.
+- **data.csv**: Data sampled during experiments.
 
 ## Getting Started
 
@@ -54,7 +54,7 @@ Ensure you have the following installed:
    ```
 2. Compile and flash (on dev/ttyUSB0) the Arduino code:
 	```bash
-	./compile.sh
+	make
 	```
 
 ### Setting Up on Linux
@@ -63,17 +63,28 @@ Ensure you have the following installed:
    ```bash
    cd linux
    ```
-2. Compile the Linux code:
+2. Compile and run the Linux code:
 	```bash
-	./compile.sh
+	make
 	```
-3. Run the main program:
-	```bash
-	./run.sh
-	```
-4. To plot the data, use:
+3. To plot the data, use:
 	```bash
 	./plot.sh
+	```
+
+### Setting Up Machine Learning
+1. Navigate to the `ML` directory:
+   ```bash
+   cd ML
+   ```
+2. Add measurements to data.csv.
+3. Install requirements:
+	```bash
+	pip install -r requirements.txt
+	```
+3. Run the script:
+	```bash
+	python weights.py
 	```
 
 ## Usage
@@ -85,4 +96,7 @@ Ensure you have the following installed:
 ## License
 
 This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for details.
+
+## Acknowledgements
+Special thanks to [Prof. Grisetti](https://sites.google.com/dis.uniroma1.it/grisetti) and Dr. De Rebotti for the guidance and support throughout the course.
 
