@@ -39,7 +39,7 @@ HEADERS=uart.h adc.h utils.h timers.h
 
 # !!!!!!!!!!!!!!!! MODIFY HERE !!!!!!!!!!!!!!!! 
 
-include ./avr_common/avr.mk
+include ./avr.mk
 
 all:
 	$(MAKE) clean
